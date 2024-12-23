@@ -1,0 +1,19 @@
+{
+	"code": 0,
+	"result": [{
+		"index": 0,
+		"name": "数美",
+		"list": [{
+			"method": "POST",
+			"title": "月账单",
+			"path": "/gocungong-ovs/shumei/getmonthbill",
+			"res_body_type": "json",
+			"req_body_form": [],
+			"req_body_other": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"startMonth\":{\"type\":\"string\"},\"endMonth\":{\"type\":\"string\",\"description\":\"2024-10\"}},\"required\":[\"startMonth\",\"endMonth\"]}",
+			"markdown": "字段详情：[https://help.ishumei.com/docs/correction/openness/#22-查询月账单明细](https://help.ishumei.com/docs/correction/openness/#22-%E6%9F%A5%E8%AF%A2%E6%9C%88%E8%B4%A6%E5%8D%95%E6%98%8E%E7%BB%86)",
+			"desc": "<p>字段详情：<a href=\"https://help.ishumei.com/docs/correction/openness/#22-%E6%9F%A5%E8%AF%A2%E6%9C%88%E8%B4%A6%E5%8D%95%E6%98%8E%E7%BB%86\">https://help.ishumei.com/docs/correction/openness/#22-查询月账单明细</a></p>\n",
+			"req_body_type": "json",
+			"res_body": "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"errNo\":{\"type\":\"number\"},\"errstr\":{\"type\":\"string\"},\"data\":{\"type\":\"object\",\"properties\":{\"contents\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"month\":{\"type\":\"string\"},\"name\":{\"type\":\"string\"},\"fullName\":{\"type\":\"string\"},\"feeType\":{\"type\":\"string\"},\"fee\":{\"type\":\"number\"},\"feeDetail\":{\"type\":\"array\",\"items\":{\"type\":\"object\",\"properties\":{\"count\":{\"type\":\"number\"},\"type\":{\"type\":\"string\"},\"price\":{\"type\":\"number\"}},\"required\":[\"count\",\"type\",\"price\"]}},\"productName\":{\"type\":\"string\"},\"appName\":{\"type\":\"string\"}},\"required\":[\"month\",\"name\",\"fullName\",\"feeType\",\"fee\",\"feeDetail\",\"productName\",\"appName\"]}},\"sumFee\":{\"type\":\"number\"}}}}}"
+		}]
+	}]
+}

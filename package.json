@@ -1,0 +1,50 @@
+{
+  "name": "yapi-to-ts",
+  "version": "1.0.0",
+  "description": "A tool to generate typescript interfaces from yapi",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "yapi",
+    "typescript"
+  ],
+  "homepage": "https://github.com/brucecham/yapi-to-ts",
+  "bugs": {
+    "url": "https://github.com/brucecham/yapi-to-ts/issues"
+  },
+  "author": "brucecham",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brucecham/yapi-to-ts.git"
+  },
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "format": "prettier --write .",
+    "check-format": "prettier --check .",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "build": "tsc",
+    "start": "ts-node --esm src/index.ts",
+    "prepare": "npm run build",
+    "ci": "npm run build && npm run check-format && npm run check-exports",
+    "test": "vitest run",
+    "dev": "npm run build && node ./lib/index.js"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.2",
+    "@types/node": "^22.10.2",
+    "prettier": "^3.4.2",
+    "request": "^2.88.3",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@types/request": "^2.48.12",
+    "quicktype-core": "^23.0.170",
+    "tslib": "^2.8.1"
+  }
+}
