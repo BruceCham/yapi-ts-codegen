@@ -8,12 +8,12 @@ import { APIType, FileInfo } from "./common";
 import { replaceKey } from "./utils";
 import { genAPITemplate } from "./template";
 
-export async function generate(list: APIType[]): Promise<FileInfo[]> {
-  const result = await Promise.all(list.map(generateApi));
+export async function generate(list: APIType[], append: string): Promise<FileInfo[]> {
+  const result = await Promise.all(list.map((item) => generateApi(item, append)));
   return result.filter(({ lines }) => !!lines);
 }
 
-export async function generateApi(request: APIType) {
+export async function generateApi(request: APIType, append: string): Promise<FileInfo> {
   const { method, path, key, type, requestSchema, responseSchema } = request;
   const finalLines = [];
   if (requestSchema) {
@@ -34,9 +34,11 @@ export async function generateApi(request: APIType) {
     }
   }
 
-  finalLines.unshift(`import request from '@/api/request';`);
-  const apiLine = genAPITemplate(method, path, type, key, !!requestSchema);
-  finalLines.push(apiLine);
+  if (append) {
+    finalLines.unshift(append);
+    const apiLine = genAPITemplate(method, path, type, key, !!requestSchema);
+    finalLines.push(apiLine);
+  }
 
   const folder = path.split('/');
   const name = folder[folder.length - 1];

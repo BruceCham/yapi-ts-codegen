@@ -2,8 +2,11 @@
   "name": "yapi-to-ts",
   "version": "1.0.0",
   "description": "A tool to generate typescript interfaces from yapi",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "bin": {
+    "yts": "./lib/cli.js"
+  },
+  "types": "lib/index.d.ts",
   "keywords": [
     "yapi",
     "typescript"
@@ -18,7 +21,7 @@
     "url": "git+https://github.com/brucecham/yapi-to-ts.git"
   },
   "files": [
-    "dist"
+    "lib"
   ],
   "license": "MIT",
   "scripts": {
@@ -43,7 +46,9 @@
     "vitest": "^2.1.8"
   },
   "dependencies": {
+    "@types/commander": "^2.12.0",
     "@types/request": "^2.48.12",
+    "commander": "^12.1.0",
     "quicktype-core": "^23.0.170",
     "tslib": "^2.8.1"
   }

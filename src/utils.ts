@@ -19,7 +19,7 @@ export function convertPathToName(url: string): string {
   return pascalCaseString + ext; // 返回带扩展名的 PascalCase 字符串
 }
 
-export function createFile(filePath: string, fileContents: string) {
+export async function createFile(filePath: string, fileContents: string) {
   mkdirSync(dirname(filePath), { recursive: true });
   writeFileSync(filePath, fileContents, "utf8");
 }
@@ -34,8 +34,15 @@ function hasProperty(schema: any): boolean {
   }
 }
 
-export function generateAPIRules(list: ListItem[]): APIType[] {
-  return list.map(item => {
+export function generateAPIRules(list: ListItem[], includeReg: string[], excludeReg: string[]): APIType[] {
+  let _list = [...list];
+  if (includeReg.length) {
+    _list = _list.filter(item => includeReg.some(reg => new RegExp(reg).test(item.path)));
+  }
+  if (excludeReg.length) {
+    _list = _list.filter(item => !excludeReg.some(reg => new RegExp(reg).test(item.path)));
+  }
+  return _list.map(item => {
     const result: APIType = {
       title: item.title,
       method: item.method.toUpperCase(),

@@ -32,3 +32,11 @@ export type APIType = {
   requestSchema?: string; // 请求参数schema
   responseSchema?: string; // 返回参数schema
 }
+
+export type ConfigType = {
+  apiUrl: string;
+  append: string;
+  output: string;
+  includeReg: string[];
+  excludeReg: string[];
+}

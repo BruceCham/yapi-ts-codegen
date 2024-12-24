@@ -1,3 +1,5 @@
 node_modules
 dist
 lib
+ytsconfig.js
+yapi.json
