@@ -38,10 +38,10 @@ export function generateAPIRules(list: ListItem[]): APIType[] {
   return list.map(item => {
     const result: APIType = {
       title: item.title,
-      method: item.method,
+      method: item.method.toUpperCase(),
       path: item.path,
       key: convertPathToName(item.path),
-      type: item.req_body_type === Type.JSON ? Type.JSON : Type.FORM,
+      type: item.req_body_type?.toLowerCase() === Type.JSON ? Type.JSON : Type.FORM,
     } as APIType;
     const { req_body_other, res_body } = item;
 
@@ -57,13 +57,34 @@ export function generateAPIRules(list: ListItem[]): APIType[] {
 
 export function parseYapi(result: ResultItem[] = []): ListItem[] {
   const list = result.reduce((acc: ListItem[], curr) => acc.concat(...curr.list.map(item => {return {
-    method: item.method,
+    method: item.method.toUpperCase(),
     title: item.title,
     path: item.path,
-    req_body_type: item.req_body_type,
+    req_body_type: item.req_body_type?.toLowerCase(),
     req_body_other: item.req_body_other,
-    res_body_type: item.res_body_type,
+    res_body_type: item.res_body_type?.toLowerCase(),
     res_body: item.res_body
   }})), []);
   return list;
+}
+
+export function replaceKey(key: string, lines: string[]) {
+  const matchedNames: string[] = [];
+  const _lines = lines.map(line => {
+    if (!line.includes(key)) {
+      return line.replace(
+        /^(export\s+interface\s+)(\w+)\b/gm,
+        (match, prefix, typeName) => {
+          matchedNames.push(typeName); // 保存原始类型名
+          return `${prefix}${key}${typeName}`; // 替换类型名
+        }
+      );
+    }
+    return line;
+  });
+  return _lines.map(line => {
+    return matchedNames.reduce((prev, curr) => {
+      return prev.replace(new RegExp(`\\b${curr}\\b`, 'g'), `${key}${curr}`);
+    }, line);
+  });
 }

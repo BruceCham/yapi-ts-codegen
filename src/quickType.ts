@@ -5,29 +5,9 @@ import {
   FetchingJSONSchemaStore
 } from "quicktype-core";
 import { APIType, FileInfo } from "./common";
+import { replaceKey } from "./utils";
+import { genAPITemplate } from "./template";
 
-function replaceKeyLines(key: string, lines: string[]) {
-  const matchedNames: string[] = [];
-  const _lines = lines.map(line => {
-    if (!line.includes(key)) {
-      return line.replace(
-        /^(export\s+interface\s+)(\w+)\b/gm,
-        (match, prefix, typeName) => {
-          matchedNames.push(typeName); // 保存原始类型名
-          return `${prefix}${key}${typeName}`; // 替换类型名
-        }
-      );
-    }
-    return line;
-  });
-  return _lines.map(line => {
-    return matchedNames.reduce((prev, curr) => {
-      return prev.replace(new RegExp(`\\b${curr}\\b`, 'g'), `${key}${curr}`);
-    }, line);
-  });
-}
-
-// todo float 转 number
 export async function generate(list: APIType[]): Promise<FileInfo[]> {
   const result = await Promise.all(list.map(generateApi));
   return result.filter(({ lines }) => !!lines);
@@ -41,7 +21,7 @@ export async function generateApi(request: APIType) {
     if (error) {
       console.error(path, error);
     } else {
-      finalLines.push(...replaceKeyLines(`${key}Req`, lines));
+      finalLines.push(...replaceKey(`${key}Req`, lines));
     }
   }
 
@@ -50,9 +30,13 @@ export async function generateApi(request: APIType) {
     if (error) {
       console.error(path, error);
     } else {
-      finalLines.push(...replaceKeyLines(key, lines));
+      finalLines.push(...replaceKey(key, lines));
     }
   }
+
+  finalLines.unshift(`import request from '@/api/request';`);
+  const apiLine = genAPITemplate(method, path, type, key, !!requestSchema);
+  finalLines.push(apiLine);
 
   const folder = path.split('/');
   const name = folder[folder.length - 1];
