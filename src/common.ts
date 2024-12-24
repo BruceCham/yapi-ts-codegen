@@ -40,4 +40,5 @@ export type ConfigType = {
   output: string;
   includeReg: string[];
   excludeReg: string[];
+  clear?: boolean;
 }

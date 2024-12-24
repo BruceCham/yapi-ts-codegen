@@ -3,6 +3,8 @@ import chalk from 'chalk';
 import gen from './index';
 import { ConfigDir, ConfigName } from './consts';
 import { ConfigType } from './common';
+import { getConfigFile } from './template';
+import { createFile } from './utils';
 
 const commander = new Command();
 
@@ -12,18 +14,27 @@ async function main() {
     .version(require('../package.json').version)
     .option(
       '--append [string]',
-      '植入request函数，不填写时，只生成ts类型文件',
+      'append to the generated file, default is "import request from "@/api/request";", you can use --append "" to remove it',
       undefined
     )
-    .option('--init [boolean]', `在当前目录下创建配置文件，默认是 ${ConfigName}.js`, false)
+    .option('--clear [boolean]', 'should the previously generated file be cleared? default false', false)
+    .option('--init [boolean]', `create config file in root, ${ConfigName}.js`, false)
     .parse(process.argv);
 
-  const { init, append } = commander.opts();
+  const { init, append, clear } = commander.opts();
+  if (init) {
+    await createFile(ConfigDir, getConfigFile());
+    console.log(chalk.green(`[Success] config file save to ${ConfigDir}`));
+    process.exit(0);
+  }
 
   try {
     const loadedConfig: ConfigType = await require(ConfigDir);
     if (append) {
       loadedConfig.append = append;
+    }
+    if (clear) {
+      loadedConfig.clear = clear;
     }
     gen(loadedConfig).then(() => {
       process.exit(0);
@@ -32,7 +43,7 @@ async function main() {
       process.exit(1);
     });
   } catch (e) {
-    console.log(chalk.red(`[ERROR]: ${ConfigName}.js 文件未初始化配置`));
+    console.log(chalk.red(`[ERROR]: ${ConfigName}.js config file not found`));
     process.exit(1);
   }
 }

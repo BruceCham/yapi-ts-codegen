@@ -14,6 +14,17 @@ export function genAPITemplate(method: string, path: string, type: string, key: 
     },
     ${params}
   });
-};`
+}`
   );
+}
+
+export function getConfigFile() {
+  const defaultConfigJSON = {
+    apiUrl: '',
+    append: 'import request from "@/api/request";',
+    output: 'dist/api',
+    includeReg: [],
+    excludeReg: [],
+  }
+  return `module.exports = ${JSON.stringify(defaultConfigJSON, null, 2)}`
 }

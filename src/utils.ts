@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from "fs";
 import { extname, basename, dirname } from "path";
 import { APIType, ListItem, ResultItem, Type } from "./common";
 
+export {removeSync} from "fs-extra";
 export function convertPathToName(url: string): string {
   const ext = extname(url); // 提取扩展名
   const baseName = basename(url, ext); // 提取文件名（无扩展名）
