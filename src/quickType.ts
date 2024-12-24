@@ -4,40 +4,53 @@ import {
   JSONSchemaInput,
   FetchingJSONSchemaStore
 } from "quicktype-core";
-import type { ListItem, QueryTypeSchemaInfo, QueryTypeSchemaResult } from "./common.d";
-import { convertPathToName } from "./utils";
+import type { ListItem, QueryTypeSchemaResult } from "./common.d";
 
+// todo float 转 number
 export async function quicktypeJSONSchema(list: ListItem[]): Promise<QueryTypeSchemaResult[]> {
-  const result: QueryTypeSchemaInfo[] = [];
-  list.forEach((item) => {
-    const { path, req_body_other, res_body } = item;
-    const prefixed = convertPathToName(path);
-
-    result.push({
-      name: `${prefixed}Req`,
-      schema: req_body_other
-    });
-
-    result.push({
-      name: `${prefixed}Res`,
-      schema: res_body
-    });
-  })
-  
-  return await Promise.all(result.map(quicktypeJSONSchemaSingle));
+  const result = await Promise.all(list.map(quicktypeJSONSchemaSingle));
+  return result.filter(({ lines }) => !!lines);
 }
 
-export async function quicktypeJSONSchemaSingle(request: QueryTypeSchemaInfo) {
+export async function quicktypeJSONSchemaSingle(request: ListItem) {
   const schemaInput = new JSONSchemaInput(new FetchingJSONSchemaStore());
-  const { name, schema } = request;
-  await schemaInput.addSource({ name, schema });
+  const { path, req_body_other, res_body } = request;
+
+  try {
+    if (req_body_other) {
+      const shema = JSON.parse(req_body_other);
+      const hasProperty = !!Object.keys(shema.properties).length;
+      hasProperty && await schemaInput.addSource({ name: 'IRequest', schema: req_body_other });
+    }
+  } catch (err) {}
+
+  try {
+    if (res_body) {
+      const shema = JSON.parse(res_body);
+      const hasProperty = !!Object.keys(shema.properties).length;
+      hasProperty && await schemaInput.addSource({ name: 'IResponse', schema: res_body });
+    }
+  } catch (err) {}
 
   const inputData = new InputData();
   inputData.addInput(schemaInput);
 
-  const { lines } = await quicktype({
+  try {
+    const { lines } = await quicktype({
       inputData,
       lang: 'ts',
-  });
-  return { name, lines: lines.join('\n') };
+      rendererOptions: {
+        'just-types': true,
+        'runtime-typecheck': false
+      },
+    });
+    const folder = path.split('/');
+    const name = folder[folder.length - 1];
+    const pathName = folder.slice(0, folder.length - 1).join('/');
+    return { name, path: pathName, lines: lines.join('\n') };
+  } catch (err) {
+    console.error(path, err);
+    console.error(req_body_other, res_body);
+    return { name: '', path, lines: '' };
+  }
 }

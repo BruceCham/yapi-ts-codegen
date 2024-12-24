@@ -1,5 +1,6 @@
 import { mkdirSync, writeFileSync } from "fs";
 import { extname, basename, dirname } from "path";
+import { ListItem, ResultItem } from "./common";
 
 export function convertPathToName(url: string): string {
   const ext = extname(url); // 提取扩展名
@@ -21,4 +22,17 @@ export function convertPathToName(url: string): string {
 export function createFile(filePath: string, fileContents: string) {
   mkdirSync(dirname(filePath), { recursive: true });
   writeFileSync(filePath, fileContents, "utf8");
+}
+
+export function parseYapi(result: ResultItem[] = []): ListItem[] {
+  const list = result.reduce((acc: ListItem[], curr) => acc.concat(...curr.list.map(item => {return {
+    method: item.method,
+    title: item.title,
+    path: item.path,
+    req_body_type: item.req_body_type,
+    req_body_other: item.req_body_other,
+    res_body_type: item.res_body_type,
+    res_body: item.res_body
+  }})), []);
+  return list;
 }

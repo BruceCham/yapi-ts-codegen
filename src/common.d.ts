@@ -19,6 +19,7 @@ export type QueryTypeSchemaInfo = {
 }
 
 export type QueryTypeSchemaResult = {
+  path: string;
   name: string;
   lines: string;
 };

@@ -1,6 +1,5 @@
-import path from 'path';
 import * as request from 'request';
-import type { ListItem, ResultItem } from './common';
+import type { ResultItem } from './common';
 
 async function downloadYapi(url: string) {
   return new Promise<{ code: number; message?: string; result?: ResultItem[] }>(rs => {
@@ -28,17 +27,4 @@ async function downloadYapi(url: string) {
 export async function download(url: string) {
   const yapiJSON = url.match(/^http/g) ? await downloadYapi(url) : require(url);
   return yapiJSON;
-}
-
-export function parseYapi(result: ResultItem[] = []): ListItem[] {
-  const list = result.reduce((acc: ListItem[], curr) => acc.concat(...curr.list.map(item => {return {
-    method: item.method,
-    title: item.title,
-    path: item.path,
-    req_body_type: item.req_body_type,
-    req_body_other: item.req_body_other,
-    res_body_type: item.res_body_type,
-    res_body: item.res_body
-  }})), []);
-  return list;
 }
