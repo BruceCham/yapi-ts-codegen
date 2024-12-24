@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "fs";
 import { extname, basename, dirname } from "path";
-import { ListItem, ResultItem } from "./common";
+import { APIType, ListItem, ResultItem, Type } from "./common";
 
 export function convertPathToName(url: string): string {
   const ext = extname(url); // 提取扩展名
@@ -22,6 +22,37 @@ export function convertPathToName(url: string): string {
 export function createFile(filePath: string, fileContents: string) {
   mkdirSync(dirname(filePath), { recursive: true });
   writeFileSync(filePath, fileContents, "utf8");
+}
+
+function hasProperty(schema: any): boolean {
+  if (!schema) return false;
+  try {
+    const obj = JSON.parse(schema);
+    return !!Object.keys(obj.properties).length;
+  } catch (err) {
+    return false;
+  }
+}
+
+export function generateAPIRules(list: ListItem[]): APIType[] {
+  return list.map(item => {
+    const result: APIType = {
+      title: item.title,
+      method: item.method,
+      path: item.path,
+      key: convertPathToName(item.path),
+      type: item.req_body_type === Type.JSON ? Type.JSON : Type.FORM,
+    } as APIType;
+    const { req_body_other, res_body } = item;
+
+    if (hasProperty(req_body_other)) {
+      result.requestSchema = req_body_other;
+    }
+    if (hasProperty(res_body)) {
+      result.responseSchema = res_body;
+    }
+    return result;
+  });
 }
 
 export function parseYapi(result: ResultItem[] = []): ListItem[] {
