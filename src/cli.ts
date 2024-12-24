@@ -20,8 +20,6 @@ async function main() {
 
   const { init, append } = commander.opts();
 
-  console.log('brucecham opts', init, append);
-
   try {
     const loadedConfig: ConfigType = await require(ConfigDir);
     if (append) {

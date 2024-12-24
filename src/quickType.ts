@@ -36,7 +36,7 @@ export async function generateApi(request: APIType, append: string): Promise<Fil
 
   if (append) {
     finalLines.unshift(append);
-    const apiLine = genAPITemplate(method, path, type, key, !!requestSchema);
+    const apiLine = genAPITemplate(method, path, type, key, !!requestSchema, !!responseSchema);
     finalLines.push(apiLine);
   }
 
@@ -44,6 +44,7 @@ export async function generateApi(request: APIType, append: string): Promise<Fil
   const name = folder[folder.length - 1];
   const pathName = folder.slice(0, folder.length - 1).join('/');
   return {
+    method,
     path: pathName,
     name,
     lines: finalLines.join('\n')

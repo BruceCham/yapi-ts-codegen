@@ -21,13 +21,14 @@ export default async function main(config: ConfigType) {
     const apiRuleList = generateAPIRules(content, includeReg, excludeReg);
 
     const results = await generate(apiRuleList, append);
-    const exportAll = [];
-    for (const { name, path , lines } of results) {
-      exportAll.push(`export * from '.${path}/${name}';`);
-      const outputPath = join(config.output, path, `${name}.ts`);
+    const exportAll = new Set<string>();
+    for (const { name, path , lines, method } of results) {
+      exportAll.add(`export * from '.${path}/${name}-${method.toLowerCase()}';`);
+      const outputPath = join(config.output, path, `${name}-${method.toLowerCase()}.ts`);
       await createFile(outputPath, lines);
     }
-    await createFile(join(output, 'index.ts'), exportAll.join('\n'));
+    await createFile(join(output, 'index.ts'), [...exportAll].join('\n'));
     return 0;
   }
+  return 1;
 }

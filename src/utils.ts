@@ -45,9 +45,9 @@ export function generateAPIRules(list: ListItem[], includeReg: string[], exclude
   return _list.map(item => {
     const result: APIType = {
       title: item.title,
-      method: item.method.toUpperCase(),
+      method: item.method.toLowerCase(),
       path: item.path,
-      key: convertPathToName(item.path),
+      key: convertPathToName(`/${item.method}${item.path}`),
       type: item.req_body_type?.toLowerCase() === Type.JSON ? Type.JSON : Type.FORM,
     } as APIType;
     const { req_body_other, res_body } = item;
@@ -64,7 +64,7 @@ export function generateAPIRules(list: ListItem[], includeReg: string[], exclude
 
 export function parseYapi(result: ResultItem[] = []): ListItem[] {
   const list = result.reduce((acc: ListItem[], curr) => acc.concat(...curr.list.map(item => {return {
-    method: item.method.toUpperCase(),
+    method: item.method.toLowerCase(),
     title: item.title,
     path: item.path,
     req_body_type: item.req_body_type?.toLowerCase(),

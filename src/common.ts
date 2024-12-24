@@ -18,6 +18,7 @@ export type ListItem = {
 }
 
 export type FileInfo = {
+  method: string;
   path: string;
   name: string;
   lines: string;
