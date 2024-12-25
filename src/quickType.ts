@@ -7,6 +7,7 @@ import {
 import { APIType, FileInfo } from "./common";
 import { replaceKey } from "./utils";
 import { genAPITemplate } from "./template";
+import { AppendQS } from "./consts";
 
 export async function generate(list: APIType[], append: string): Promise<FileInfo[]> {
   return await Promise.all(list.map((item) => generateApi(item, append)));
@@ -34,6 +35,7 @@ export async function generateApi(request: APIType, append: string): Promise<Fil
   }
 
   if (append) {
+    type !== 'json' && requestSchema && finalLines.unshift(AppendQS);
     finalLines.unshift(append);
     const apiLine = genAPITemplate(method, path, type, key, !!requestSchema, !!responseSchema);
     finalLines.push(apiLine);
