@@ -20,6 +20,12 @@ config file demo
   // request function, you can use "" to remove it
 	"append": `import request from '@/api/request';`,
 
+  // clear the generated files
+  "clear": true,
+
+  // save error logs or not  yts.error.log
+  "saveErrLog": true,
+
   // output
 	"output": 'src/api-type',
 

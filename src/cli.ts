@@ -21,7 +21,7 @@ async function main() {
     .option('--init [boolean]', `create config file in root, ${ConfigName}.js`, false)
     .parse(process.argv);
 
-  const { init, append, clear } = commander.opts();
+  const { init, append, clear, saveErrLog } = commander.opts();
   if (init) {
     await createFile(ConfigDir, getConfigFile());
     console.log(chalk.green(`[Success] config file save to ${ConfigDir}`));
@@ -35,6 +35,9 @@ async function main() {
     }
     if (clear) {
       loadedConfig.clear = clear;
+    }
+    if (saveErrLog) {
+      loadedConfig.saveErrLog = saveErrLog;
     }
     gen(loadedConfig).then(() => {
       process.exit(0);

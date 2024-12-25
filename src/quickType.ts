@@ -9,8 +9,7 @@ import { replaceKey } from "./utils";
 import { genAPITemplate } from "./template";
 
 export async function generate(list: APIType[], append: string): Promise<FileInfo[]> {
-  const result = await Promise.all(list.map((item) => generateApi(item, append)));
-  return result.filter(({ lines }) => !!lines);
+  return await Promise.all(list.map((item) => generateApi(item, append)));
 }
 
 export async function generateApi(request: APIType, append: string): Promise<FileInfo> {
@@ -19,7 +18,7 @@ export async function generateApi(request: APIType, append: string): Promise<Fil
   if (requestSchema) {
     const { lines, error } = await quicktypeJSONSchemaSingle(`${key}Req`, requestSchema);
     if (error) {
-      console.error(path, error);
+      return { method, path, name: key, lines: '', error };
     } else {
       finalLines.push(...replaceKey(`${key}Req`, lines));
     }
@@ -28,7 +27,7 @@ export async function generateApi(request: APIType, append: string): Promise<Fil
   if (responseSchema) {
     const { lines, error } = await quicktypeJSONSchemaSingle(key, responseSchema);
     if (error) {
-      console.error(path, error);
+      return { method, path, name: key, lines: '', error };
     } else {
       finalLines.push(...replaceKey(key, lines));
     }

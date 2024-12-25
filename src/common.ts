@@ -22,6 +22,7 @@ export type FileInfo = {
   path: string;
   name: string;
   lines: string;
+  error?: any;
 };
 
 export type APIType = {
@@ -41,4 +42,5 @@ export type ConfigType = {
   includeReg: string[];
   excludeReg: string[];
   clear?: boolean;
+  saveErrLog?: boolean;
 }
