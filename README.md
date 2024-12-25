@@ -1,5 +1,5 @@
 # how to use?
-`Yapi to ts` can automatically generate type definitions for each layer based on the data structure returned by YAPI. Additionally, it allows you to configure whether to generate request functions.
+`Yapi codegen ts` can automatically generate type definitions for each layer based on the data structure returned by YAPI. Additionally, it allows you to configure whether to generate request functions.
 
 ## Installation  
 
@@ -19,10 +19,10 @@ config file demo
 ```js
 {
   // yapi url, you can get it from project setting
-	"apiUrl": "https://yapi.xxx.com/api/open/plugin/export-full?type=json&pid=111&status=all&token=token",
-
+  "apiUrl": "https://yapi.xxx.com/api/open/plugin/export-full?type=json&pid=111&status=all&token=token",
+  
   // request function, you can use "" to remove it
-	"append": `import request from '@/api/request';`,
+  "append": `import request from '@/api/request';`,
 
   // clear the generated files
   "clear": true,
@@ -31,10 +31,10 @@ config file demo
   "saveErrLog": true,
 
   // output
-	"output": 'src/api-type',
+  "output": 'src/api-type',
 
   // includeReg for filter
-	"includeReg": [/api|apiv2/g],
+  "includeReg": [/api|apiv2/g],
   
   // excludeReg for filter
   "excludeReg": [/\?act=.+$/],
@@ -68,72 +68,72 @@ npx yts --clear
 }
 
 {
-	"$schema": "http://json-schema.org/draft-04/schema#",
-	"type": "object",
-	"properties": {
-		"errNo": {
-			"type": "number"
-		},
-		"errstr": {
-			"type": "string"
-		},
-		"data": {
-			"type": "object",
-			"properties": {
-				"contents": {
-					"type": "array",
-					"items": {
-						"type": "object",
-						"properties": {
-							"month": {
-								"type": "string"
-							},
-							"name": {
-								"type": "string"
-							},
-							"fullName": {
-								"type": "string"
-							},
-							"feeType": {
-								"type": "string"
-							},
-							"fee": {
-								"type": "number"
-							},
-							"feeDetail": {
-								"type": "array",
-								"items": {
-									"type": "object",
-									"properties": {
-										"count": {
-											"type": "number"
-										},
-										"type": {
-											"type": "string"
-										},
-										"price": {
-											"type": "number"
-										}
-									},
-									"required": ["count", "type", "price"]
-								}
-							},
-							"productName": {
-								"type": "string"
-							},
-							"appName": {
-								"type": "string"
-							}
-						},
-						"required": ["month", "name", "fullName", "feeType", "fee", "feeDetail", "productName", "appName"]
-					}
-				},
-				"sumFee": {
-					"type": "number"
-				}
-			}
-		}
-	}
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "errNo": {
+      "type": "number"
+    },
+    "errstr": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "contents": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "month": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "fullName": {
+                "type": "string"
+              },
+              "feeType": {
+                "type": "string"
+              },
+              "fee": {
+                "type": "number"
+              },
+              "feeDetail": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "number"
+                    },
+                    "type": {
+                      "type": "string"
+                    },
+                    "price": {
+                      "type": "number"
+                    }
+                  },
+                  "required": ["count", "type", "price"]
+                }
+              },
+              "productName": {
+                "type": "string"
+              },
+              "appName": {
+                "type": "string"
+              }
+            },
+            "required": ["month", "name", "fullName", "feeType", "fee", "feeDetail", "productName", "appName"]
+          }
+        },
+        "sumFee": {
+          "type": "number"
+        }
+      }
+    }
+  }
 }
 ```
 
