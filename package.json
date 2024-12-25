@@ -4,7 +4,7 @@
   "description": "A tool to generate typescript interfaces from yapi",
   "main": "lib/index.js",
   "bin": {
-    "yts": "./lib/cli.js"
+    "yts": "lib/cli.js"
   },
   "types": "lib/index.d.ts",
   "keywords": [
