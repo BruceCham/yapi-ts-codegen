@@ -1,5 +1,5 @@
 {
-  "name": "yapi-to-ts",
+  "name": "yapi-ts-codegen",
   "version": "1.0.0",
   "description": "A tool to generate typescript interfaces from yapi",
   "main": "lib/index.js",
@@ -12,9 +12,9 @@
     "codegen",
     "typescript"
   ],
-  "homepage": "https://github.com/brucecham/yapi-to-ts",
+  "homepage": "https://github.com/brucecham/yapi-ts-codegen",
   "bugs": {
-    "url": "https://github.com/brucecham/yapi-to-ts/issues"
+    "url": "https://github.com/brucecham/yapi-ts-codegen/issues"
   },
   "author": {
     "name": "Bruce Cham",
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/brucecham/yapi-to-ts.git"
+    "url": "git+https://github.com/brucecham/yapi-ts-codegen.git"
   },
   "files": [
     "lib"

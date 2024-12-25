@@ -4,7 +4,7 @@
 ## Installation  
 
 ```bash
-npm install yapi-to-ts
+npm install yapi-ts-codegen
 ```
 
 
