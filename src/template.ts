@@ -22,7 +22,9 @@ export function getConfigFile() {
   const defaultConfigJSON = {
     apiUrl: '',
     append: 'import request from "@/api/request";',
-    output: 'dist/api',
+    output: 'src/api',
+    clear: true,
+    saveErrLog: true,
     includeReg: [],
     excludeReg: [],
   }
