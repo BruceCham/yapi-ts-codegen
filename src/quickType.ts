@@ -4,37 +4,57 @@ import {
   JSONSchemaInput,
   FetchingJSONSchemaStore
 } from "quicktype-core";
-import type { ListItem, QueryTypeSchemaResult } from "./common.d";
+import { APIType, FileInfo } from "./common";
+import { replaceKey } from "./utils";
+import { genAPITemplate } from "./template";
 
-// todo float 转 number
-export async function quicktypeJSONSchema(list: ListItem[]): Promise<QueryTypeSchemaResult[]> {
-  const result = await Promise.all(list.map(quicktypeJSONSchemaSingle));
-  return result.filter(({ lines }) => !!lines);
+export async function generate(list: APIType[], append: string): Promise<FileInfo[]> {
+  return await Promise.all(list.map((item) => generateApi(item, append)));
 }
 
-export async function quicktypeJSONSchemaSingle(request: ListItem) {
+export async function generateApi(request: APIType, append: string): Promise<FileInfo> {
+  const { method, path, key, type, requestSchema, responseSchema } = request;
+  const finalLines = [];
+  if (requestSchema) {
+    const { lines, error } = await quicktypeJSONSchemaSingle(`${key}Req`, requestSchema);
+    if (error) {
+      return { method, path, name: key, lines: '', error };
+    } else {
+      finalLines.push(...replaceKey(`${key}Req`, lines));
+    }
+  }
+
+  if (responseSchema) {
+    const { lines, error } = await quicktypeJSONSchemaSingle(key, responseSchema);
+    if (error) {
+      return { method, path, name: key, lines: '', error };
+    } else {
+      finalLines.push(...replaceKey(key, lines));
+    }
+  }
+
+  if (append) {
+    finalLines.unshift(append);
+    const apiLine = genAPITemplate(method, path, type, key, !!requestSchema, !!responseSchema);
+    finalLines.push(apiLine);
+  }
+
+  const folder = path.split('/');
+  const name = folder[folder.length - 1];
+  const pathName = folder.slice(0, folder.length - 1).join('/');
+  return {
+    method,
+    path: pathName,
+    name,
+    lines: finalLines.join('\n')
+  };
+}
+
+export async function quicktypeJSONSchemaSingle(name: string, schema: string) {
   const schemaInput = new JSONSchemaInput(new FetchingJSONSchemaStore());
-  const { path, req_body_other, res_body } = request;
-
-  try {
-    if (req_body_other) {
-      const shema = JSON.parse(req_body_other);
-      const hasProperty = !!Object.keys(shema.properties).length;
-      hasProperty && await schemaInput.addSource({ name: 'IRequest', schema: req_body_other });
-    }
-  } catch (err) {}
-
-  try {
-    if (res_body) {
-      const shema = JSON.parse(res_body);
-      const hasProperty = !!Object.keys(shema.properties).length;
-      hasProperty && await schemaInput.addSource({ name: 'IResponse', schema: res_body });
-    }
-  } catch (err) {}
-
+  await schemaInput.addSource({ name, schema });
   const inputData = new InputData();
   inputData.addInput(schemaInput);
-
   try {
     const { lines } = await quicktype({
       inputData,
@@ -44,13 +64,8 @@ export async function quicktypeJSONSchemaSingle(request: ListItem) {
         'runtime-typecheck': false
       },
     });
-    const folder = path.split('/');
-    const name = folder[folder.length - 1];
-    const pathName = folder.slice(0, folder.length - 1).join('/');
-    return { name, path: pathName, lines: lines.join('\n') };
+    return { lines: lines, error: null };
   } catch (err) {
-    console.error(path, err);
-    console.error(req_body_other, res_body);
-    return { name: '', path, lines: '' };
+    return { lines: [], error: err };
   }
 }

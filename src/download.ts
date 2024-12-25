@@ -1,5 +1,5 @@
 import * as request from 'request';
-import type { ResultItem } from './common';
+import { ResultItem } from './common';
 
 async function downloadYapi(url: string) {
   return new Promise<{ code: number; message?: string; result?: ResultItem[] }>(rs => {

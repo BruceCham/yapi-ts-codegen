@@ -2,23 +2,30 @@
   "name": "yapi-to-ts",
   "version": "1.0.0",
   "description": "A tool to generate typescript interfaces from yapi",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "bin": {
+    "yts": "./lib/cli.js"
+  },
+  "types": "lib/index.d.ts",
   "keywords": [
     "yapi",
+    "codegen",
     "typescript"
   ],
   "homepage": "https://github.com/brucecham/yapi-to-ts",
   "bugs": {
     "url": "https://github.com/brucecham/yapi-to-ts/issues"
   },
-  "author": "brucecham",
+  "author": {
+    "name": "Bruce Cham",
+    "email": "brucecham2024@gmail.com"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/brucecham/yapi-to-ts.git"
   },
   "files": [
-    "dist"
+    "lib"
   ],
   "license": "MIT",
   "scripts": {
@@ -36,14 +43,18 @@
     "@arethetypeswrong/cli": "^0.17.2",
     "@types/node": "^22.10.2",
     "prettier": "^3.4.2",
-    "request": "^2.88.3",
+    "request": "^2.88.2",
     "ts-node": "^10.9.2",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
     "vitest": "^2.1.8"
   },
   "dependencies": {
+    "@types/commander": "^2.12.0",
+    "@types/fs-extra": "^11.0.4",
     "@types/request": "^2.48.12",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0",
     "quicktype-core": "^23.0.170",
     "tslib": "^2.8.1"
   }
