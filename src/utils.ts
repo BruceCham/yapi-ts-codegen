@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "fs";
 import { extname, basename, dirname } from "path";
-import { APIType, ListItem, ResultItem, Type } from "./common";
+import { APIType, ListItem, ParamsType, ResultItem, Type } from "./common";
 import {removeSync} from "fs-extra";
 
 export function convertPathToName(url: string): string {
@@ -58,6 +58,14 @@ export function generateAPIRules(list: ListItem[], includeReg: string[], exclude
 
     if (hasProperty(req_body_other)) {
       result.requestSchema = req_body_other;
+    } else if (item.req_body_type?.toLowerCase() !== Type.JSON) {
+      const paramsList = [
+        ...(item.req_headers?.filter((i) => i.name !== 'Content-Type') || []),
+        ...(item.req_params || []),
+        ...(item.req_query || []),
+        ...(item.req_body_form || []),
+      ];
+      result.requestSchema = paramsList.length ? JSON.stringify(convertToJsonSchema(paramsList)) : '';
     }
     if (hasProperty(res_body)) {
       result.responseSchema = res_body;
@@ -73,6 +81,9 @@ export function parseYapi(result: ResultItem[] = []): ListItem[] {
     path: item.path,
     req_body_type: item.req_body_type?.toLowerCase(),
     req_body_other: item.req_body_other,
+    req_params: item.req_params,
+    req_query: item.req_query,
+    req_body_form: item.req_body_form,
     res_body_type: item.res_body_type?.toLowerCase(),
     res_body: item.res_body
   }})), []);
@@ -106,4 +117,68 @@ export function replaceKey(key: string, lines: string[]) {
       return prev.replace(new RegExp(`\\b${curr}\\b`, 'g'), `${key}${curr}`);
     }, line);
   });
+}
+
+export function convertToJsonSchema(reqBodyForm: ParamsType[]) {
+  const schema: any = {
+    type: "object",
+    properties: {},
+    required: []
+  };
+
+  reqBodyForm.forEach(field => {
+    const { name, type, required, description, example, properties, items } = field;
+
+    // Map YAPI field type to JSON Schema type
+    const jsonSchemaType = mapToJsonSchemaType(type);
+
+    if (jsonSchemaType === "object" && properties) {
+      // 如果是嵌套对象，递归处理
+      schema.properties[name] = {
+        type: "object",
+        properties: convertToJsonSchema(properties).properties,
+        description: description || "",
+        example: example || null
+      };
+    } else if (jsonSchemaType === "array" && items) {
+      // 如果是数组，递归处理 items
+      schema.properties[name] = {
+        type: "array",
+        items: convertToJsonSchema(items),
+        description: description || "",
+        example: example || null
+      };
+    } else {
+      // 普通字段
+      schema.properties[name] = {
+        type: jsonSchemaType,
+        description: description || "",
+        example: example || null
+      };
+    }
+
+    // Add to required fields if necessary
+    if (required) {
+      schema.required.push(name);
+    }
+  });
+
+  return schema;
+}
+
+export function mapToJsonSchemaType(type: string) {
+  switch (type) {
+    case "string":
+      return "string";
+    case "number":
+      return "number";
+    case "boolean":
+      return "boolean";
+    case "array":
+      return "array";
+    case "object":
+      return "object";
+    default:
+      return "string"; // 默认处理
+  }
 }

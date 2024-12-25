@@ -7,12 +7,27 @@ export type ResultItem = {
   name: string;
   list: ListItem[];
 }
+
+export type ParamsType = {
+  name: string;
+  required?: boolean;
+  type: string;
+  desc?: string;
+  description?: string;
+  example?: string;
+  properties?: ParamsType[];
+  items?: ParamsType[];
+}
 export type ListItem = {
   method: string;
   title: string;
   path: string;
   req_body_type: string;
   req_body_other: string;
+  req_headers?: ParamsType[];
+  req_params?: ParamsType[];
+  req_query?: ParamsType[];
+  req_body_form?: ParamsType[];
   res_body_type: string;
   res_body: string;
 }
