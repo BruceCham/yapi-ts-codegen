@@ -82,6 +82,14 @@ export function parseYapi(result: ResultItem[] = []): ListItem[] {
 export function replaceKey(key: string, lines: string[]) {
   const matchedNames: string[] = [];
   const _lines = lines.map(line => {
+    if (line.toLowerCase().includes(key.toLowerCase())) {
+      return line.replace(
+        /^(export\s+interface\s+)(\w+)\b/gm,
+        (match, prefix, typeName) => {
+          return `${prefix}${key}`; // 防止 acronyms 关键词处理引发不一致问题
+        }
+      );
+    }
     if (!line.includes(key)) {
       return line.replace(
         /^(export\s+interface\s+)(\w+)\b/gm,
