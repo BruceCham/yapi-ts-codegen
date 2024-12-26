@@ -56,12 +56,14 @@ export function generateAPIRules(list: ListItem[], includeReg: string[], exclude
         ...(item.req_headers?.filter((i) => i.name !== 'Content-Type') || []),
         ...(item.req_params || []),
         ...(item.req_query || []),
-        ...(item.req_body_form || []),
       ];
       result.requestSchema = paramsList.length ? JSON.stringify(convertToJsonSchema(paramsList)) : '';
     } else if (hasProperty(req_body_other)) {
       result.requestSchema = req_body_other;
+    } else {
+      result.requestSchema = item.req_body_form?.length ? JSON.stringify(convertToJsonSchema(item.req_body_form)) : '';
     }
+
     if (hasProperty(res_body)) {
       result.responseSchema = res_body;
     }
@@ -92,7 +94,10 @@ export function replaceKey(key: string, lines: string[]) {
       return line.replace(
         /^(export\s+interface\s+)(\w+)\b/gm,
         (match, prefix, typeName) => {
-          return `${prefix}${key}`; // 防止 acronyms 关键词处理引发不一致问题
+          if (typeName.toLowerCase() === key.toLowerCase()) {
+            return `${prefix}${key}`; // 防止 acronyms 关键词处理引发不一致问题
+          }
+          return `${prefix}${typeName}`; // 防止 acronyms 关键词处理引发不一致问题
         }
       );
     }
