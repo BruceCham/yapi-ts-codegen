@@ -158,7 +158,7 @@ export function convertToJsonSchema(reqBodyForm: ParamsType[]) {
     }
 
     // Add to required fields if necessary
-    if (required) {
+    if (Number(required) === 1) {
       schema.required.push(name);
     }
   });
