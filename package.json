@@ -1,6 +1,6 @@
 {
   "name": "yapi-ts-codegen",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A tool to generate typescript interfaces from yapi",
   "main": "lib/index.js",
   "bin": {

@@ -58,7 +58,7 @@ export function generateAPIRules(list: ListItem[], includeReg: string[], exclude
 
     if (hasProperty(req_body_other)) {
       result.requestSchema = req_body_other;
-    } else if (item.req_body_type?.toLowerCase() !== Type.JSON) {
+    } else {
       const paramsList = [
         ...(item.req_headers?.filter((i) => i.name !== 'Content-Type') || []),
         ...(item.req_params || []),
