@@ -56,9 +56,7 @@ export function generateAPIRules(list: ListItem[], includeReg: string[], exclude
     } as APIType;
     const { req_body_other, res_body } = item;
 
-    if (hasProperty(req_body_other)) {
-      result.requestSchema = req_body_other;
-    } else {
+    if (item.method.toLowerCase() === 'get') {
       const paramsList = [
         ...(item.req_headers?.filter((i) => i.name !== 'Content-Type') || []),
         ...(item.req_params || []),
@@ -66,6 +64,8 @@ export function generateAPIRules(list: ListItem[], includeReg: string[], exclude
         ...(item.req_body_form || []),
       ];
       result.requestSchema = paramsList.length ? JSON.stringify(convertToJsonSchema(paramsList)) : '';
+    } else if (hasProperty(req_body_other)) {
+      result.requestSchema = req_body_other;
     }
     if (hasProperty(res_body)) {
       result.responseSchema = res_body;
