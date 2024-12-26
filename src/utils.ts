@@ -1,23 +1,18 @@
 import { mkdirSync, writeFileSync } from "fs";
-import { extname, basename, dirname } from "path";
+import { dirname } from "path";
 import { APIType, ListItem, ParamsType, ResultItem, Type } from "./common";
 import {removeSync} from "fs-extra";
 
 export function convertPathToName(url: string): string {
-  const ext = extname(url); // 提取扩展名
-  const baseName = basename(url, ext); // 提取文件名（无扩展名）
-  const dirName = dirname(url); // 提取文件路径
-
-  const pascalCaseString = dirName
-    .replace(/\\/g, '/')
+  const str = url.split('?')[0];
+  const pascalCaseString = str.replaceAll('-', '').replaceAll('_', '')
     .split('/')
     .filter(Boolean)
     .flatMap(part => part.split('-'))
-    .concat(baseName)
     .map(part => part.charAt(0).toUpperCase() + part.slice(1))
     .join('');
 
-  return pascalCaseString + ext; // 返回带扩展名的 PascalCase 字符串
+  return pascalCaseString;
 }
 
 export async function clearDir(dir: string) {
