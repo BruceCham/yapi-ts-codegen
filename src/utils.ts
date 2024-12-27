@@ -72,7 +72,7 @@ export function generateAPIRules(list: ListItem[], includeReg: string[], exclude
         }
       }
     }
-    result.requestSchema = paramsList.length ? JSON.stringify(convertToJsonSchema(paramsList, originSchema)) : '';
+    result.requestSchema = paramsList.length ? JSON.stringify(convertToJsonSchema(paramsList, originSchema)) : (originSchema ? api.req_body_other : '');
 
     let body = api.res_body;
     if (api.res_body_is_json_schema && api.res_schema_body) {
