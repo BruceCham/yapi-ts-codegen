@@ -22,14 +22,17 @@ export type ListItem = {
   method: string;
   title: string;
   path: string;
+  req_body_is_json_schema: boolean;
   req_body_type: string;
+  req_headers: ParamsType[];
+  req_params: ParamsType[];
+  req_query: ParamsType[];
   req_body_other: string;
-  req_headers?: ParamsType[];
-  req_params?: ParamsType[];
-  req_query?: ParamsType[];
-  req_body_form?: ParamsType[];
+  req_body_form: ParamsType[];
+  res_body_is_json_schema: boolean;
   res_body_type: string;
   res_body: string;
+  res_schema_body: string;
 }
 
 export type FileInfo = {

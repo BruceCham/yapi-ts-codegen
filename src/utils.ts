@@ -41,48 +41,66 @@ export function generateAPIRules(list: ListItem[], includeReg: string[], exclude
   if (excludeReg.length) {
     _list = _list.filter(item => !excludeReg.some(reg => new RegExp(reg).test(item.path)));
   }
-  return _list.map(item => {
+  return _list.map(api => {
     const result: APIType = {
-      title: item.title,
-      method: item.method.toLowerCase(),
-      path: item.path,
-      key: convertPathToName(`/${item.method}${item.path}`),
-      type: item.req_body_type?.toLowerCase() === Type.JSON ? Type.JSON : Type.FORM,
+      title: api.title,
+      method: api.method.toLowerCase(),
+      path: api.path,
+      key: convertPathToName(`/${api.method}${api.path}`),
+      type: api.req_body_type?.toLowerCase() === Type.JSON ? Type.JSON : Type.FORM,
     } as APIType;
-    const { req_body_other, res_body } = item;
 
-    if (item.method.toLowerCase() === 'get') {
-      const paramsList = [
-        ...(item.req_headers?.filter((i) => i.name !== 'Content-Type') || []),
-        ...(item.req_params || []),
-        ...(item.req_query || []),
-      ];
-      result.requestSchema = paramsList.length ? JSON.stringify(convertToJsonSchema(paramsList)) : '';
-    } else if (hasProperty(req_body_other)) {
-      result.requestSchema = req_body_other;
-    } else {
-      result.requestSchema = item.req_body_form?.length ? JSON.stringify(convertToJsonSchema(item.req_body_form)) : '';
+    const paramsList = [
+      ...(api.req_headers?.filter((i) => i.name !== 'Content-Type') || []),
+      ...(api.req_params || []),
+      ...(api.req_query || []),
+    ];
+
+    let originSchema = null;
+    if (api.method.toLowerCase() !== 'get') {
+      switch (api.req_body_type) {
+        case 'form' : {
+          api.req_body_form?.length && paramsList.push(...api.req_body_form);
+          break;
+        }
+        case 'json': 
+        case 'raw': {
+          if (hasProperty(api.req_body_other)) {
+            originSchema = JSON.parse(api.req_body_other);
+          }
+          break;
+        }
+      }
     }
+    result.requestSchema = paramsList.length ? JSON.stringify(convertToJsonSchema(paramsList, originSchema)) : '';
 
-    if (hasProperty(res_body)) {
-      result.responseSchema = res_body;
+    let body = api.res_body;
+    if (api.res_body_is_json_schema && api.res_schema_body) {
+      body = api.res_schema_body;
+    }
+    if (hasProperty(body)) {
+      result.responseSchema = body;
     }
     return result;
   });
 }
 
 export function parseYapi(result: ResultItem[] = []): ListItem[] {
-  const list = result.reduce((acc: ListItem[], curr) => acc.concat(...curr.list.map(item => {return {
-    method: item.method.toLowerCase(),
-    title: item.title,
-    path: item.path,
-    req_body_type: item.req_body_type?.toLowerCase(),
-    req_body_other: item.req_body_other,
-    req_params: item.req_params,
-    req_query: item.req_query,
-    req_body_form: item.req_body_form,
-    res_body_type: item.res_body_type?.toLowerCase(),
-    res_body: item.res_body
+  const list = result.reduce((acc: ListItem[], curr) => acc.concat(...curr.list.map(api => {return {
+    method: api.method.toLowerCase(),
+    title: api.title,
+    path: api.path,
+    req_body_type: api.req_body_type?.toLowerCase(),
+    req_body_is_json_schema: api.req_body_is_json_schema,
+    req_body_other: api.req_body_other,
+    req_params: api.req_params,
+    req_query: api.req_query,
+    req_headers: api.req_headers,
+    req_body_form: api.req_body_form,
+    res_body_is_json_schema: api.res_body_is_json_schema,
+    res_body_type: api.res_body_type?.toLowerCase(),
+    res_body: api.res_body,
+    res_schema_body: api.res_schema_body,
   }})), []);
   return list;
 }
@@ -119,8 +137,8 @@ export function replaceKey(key: string, lines: string[]) {
   });
 }
 
-export function convertToJsonSchema(reqBodyForm: ParamsType[]) {
-  const schema: any = {
+export function convertToJsonSchema(reqBodyForm: ParamsType[], originSchema?: any) {
+  const schema: any = originSchema || {
     type: "object",
     properties: {},
     required: []
