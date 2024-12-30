@@ -6,7 +6,7 @@ export function genAPITemplate(method: string, path: string, type: string, key: 
   const fnName = `api${key}`;
   const contentType = isForm ? "application/x-www-form-urlencoded;charset=UTF-8" : "application/json";
   const req = hasRequest ? `data: ${key}Req` : '';
-  const params = `${isGet ? 'params' : 'data'}: ${hasRequest ? isForm ? 'qs.stringify(data)' : 'data' : '{}'},`;
+  const params = `${isGet ? 'params' : 'data'}: ${hasRequest ? (isForm && !isGet) ? 'qs.stringify(data)' : 'data' : '{}'},`;
 
   return (
 `export async function ${fnName}(${req}): Promise<${hasResponse ? key : 'any'}> {
