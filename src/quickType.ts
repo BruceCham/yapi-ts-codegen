@@ -35,7 +35,7 @@ export async function generateApi(request: APIType, append: string): Promise<Fil
   }
 
   if (append) {
-    type !== 'json' && requestSchema && finalLines.unshift(AppendQS);
+    type !== 'json' && requestSchema && method === 'post' && finalLines.unshift(AppendQS);
     finalLines.unshift(append);
     const apiLine = genAPITemplate(method, path, type, key, !!requestSchema, !!responseSchema);
     finalLines.push(apiLine);
