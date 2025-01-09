@@ -35,7 +35,7 @@ export default async function main(config: ConfigType) {
       const outputPath = join(config.output, path, `${name}-${method.toLowerCase()}.ts`);
       await createFile(outputPath, lines);
     }
-    await createFile(join(output, 'index.ts'), [...exportAll].join('\n'));
+    await createFile(join(output, 'index.ts'), [...exportAll].sort((a: string, b: string) => a.localeCompare(b, 'en', { sensitivity: 'base' })).join('\n'));
     return 0;
   }
   return 1;
