@@ -1,4 +1,6 @@
-# how to use?
+# yapi-ts-codegen  
+[![NPM](https://nodei.co/npm/yapi-ts-codegen.png?downloads=true&downloadRank=true)](https://nodei.co/npm/yapi-ts-codegen/)  
+
 `Yapi codegen ts` can automatically generate type definitions for each layer based on the data structure returned by YAPI. Additionally, it allows you to configure whether to generate request functions.
 
 ## Installation  
